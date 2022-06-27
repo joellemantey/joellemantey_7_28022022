@@ -3,28 +3,41 @@
     <img class="logo" alt="logo" src="../assets/icon-above-font.png">
     <p class="presentation">Pour partagez et restez en contact avec vos collègues,<br>
       n'attendez plus connectez-vous ou inscrivez-vous!</p>
-    <form class="login" @submit.prevent="submit()">
-      <label for="email">Email:
-        <input id="email" name="email" type="email" v-model="email" placeholder="Email Address"/>
-      </label><br>
-      <label for="password">Password:
-        <input id="password" name="password" type="password" v-model="password"
-               placeholder="Password"/>
-      </label><br>
-      <button>Login</button><br>
-      <button>Create a new account</button>
-    </form>
+    <el-form class="login" @submit.prevent label-width="460px" style="max-width: 960px">
+      <el-form-item for="email">Email:
+        <el-input id="email" name="email" type="email" v-model="email" placeholder="Email Address">
+        </el-input>
+      </el-form-item>
+      <el-form-item for="password">Password:
+        <el-input id="password" name="password" type="password" v-model="password"
+                  placeholder="Password"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submit()" round>Login</el-button>
+        <router-link to="/signup">
+          <el-button type="primary" round>Create a new account</el-button>
+        </router-link>
+      </el-form-item>
+    </el-form>
   </div>
-
 </template>
 
 <script>
-import axios from 'axios';
+
+import {
+  ElButton, ElForm, ElFormItem, ElInput,
+} from 'element-plus';
+
+import axios from '../axios';
 
 const baseURI = 'http://localhost:3000/api/auth';
 
 export default {
   name: 'LoginPage',
+  components: {
+    ElButton, ElForm, ElFormItem, ElInput,
+  },
+
   data() {
     return {
       email: '',
@@ -44,7 +57,10 @@ export default {
             alert('User not found');
           }
           if (response.status === 200) {
-            // TODO redirect to home
+            localStorage.setItem('token', `${response.data.token}`);
+            // localStorage.setItem('id', `${response.data.userId}`);
+            // axios.defaults.headers.common.Authorization = localStorage.getItem('token');
+            this.$router.push({ name: 'PageAccueil' });
           }
         })
         .catch((error) => {
@@ -64,6 +80,13 @@ export default {
 
 .logo {
   width: 600px;
+  margin: auto;
+}
+
+.form {
+  width: 370px;
+  text-align: end;
+  margin: 0 auto 30px;
 }
 
 .presentation {
@@ -83,7 +106,7 @@ input {
   min-width: 200px;
 }
 
-button{
+button {
   margin: 10px;
   padding: 6px;
   color: #FC2E00;

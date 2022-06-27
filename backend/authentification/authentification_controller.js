@@ -18,16 +18,16 @@ exports.signup = (req, res, next) => {
             }
             const sql = 'INSERT INTO user (email, password, nom, prenom, job, departement) VALUES (?,?,?,?,?,?)'
             const params = [data.email, data.password, data.nom, data.prenom, data.job, data.departement]
-            db.run(sql, params, function (err, result) {
+            db.run(sql, params, function (err, row, result) {
                 if (err) {
                     res.status(400).json({"error": err.message})
-                    return;
+                } else {
+                    res.json({
+                        "message": "success",
+                        "data": data,
+                        "id": this.lastID
+                    })
                 }
-                res.json({
-                    "message": "success",
-                    "data": data,
-                    "id": this.lastID
-                })
             });
         });
 }
@@ -45,9 +45,7 @@ exports.login = (req, res, next) => {
         if(!row){
             res.status(204).json();
             return;
-            console.log("here")
         }
-        console.log('toto')
         bcrypt.compare(req.body.password, row.password)
             .then(valid => {
                 if (!valid) {
@@ -59,9 +57,10 @@ exports.login = (req, res, next) => {
                         {userId: row.id},
                         'RANDOM_TOKEN_SECRET',
                         {expiresIn: '24h'}
-                    )
+                    ),
                 });
             })
             .catch(error => res.status(500).json({error}));
     });
 };
+

@@ -10,3 +10,11 @@ create table user(
 
 -- INSERT INTO user (nom, prenom, job, departement) values('joelle', 'mantey', 'developpeuse', 'web')
 
+create table post(
+    id integer primary key autoincrement,
+    contenu text,
+    contenu_multimedias varchar (150),
+    user_id integer,
+    foreign key (user_id) references user(id)
+);
+
